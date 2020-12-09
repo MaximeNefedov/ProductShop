@@ -11,12 +11,15 @@ package Shop;
 
 import Exceptions.ProductNotFoundException;
 import Exceptions.ShopOutOfProductException;
+import Shop.SupplierFactory.ProductSupplierFactory;
+import Shop.SupplierFactory.VegetableSupplierFactory;
 
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
         supplyProducts();
+
 
         System.out.println("Добро пожаловать в продуктовый магазин");
         Scanner scanner = new Scanner(System.in);
@@ -91,6 +94,9 @@ public class Main {
                     "\n=============================================");
             input = scanner.nextInt();
             if (input == 1) {
+//                Правило DRY
+//                Можно было бы не выносить в отдельный метод логику
+//                поиска продукта, а писать ее заново каждый раз, когда потребуется
                 boolean b = searchProduct();
                 if (!b) {
                     return false;
@@ -205,24 +211,56 @@ public class Main {
     }
 
     private static void supplyProducts() {
+//        Product product1 = new Product("Lindor", ProductType.CANDY, 234, 10);
+//        Product product2 = new Product("7 UP", ProductType.BEVERAGES, 404, 20);
+//        Product product3 = new Product("Мираторг", ProductType.MEAT, 1440, 50);
+//        Product product4 = new Product("Овощи вкусные", ProductType.VEGETABLES, 100, 20);
+//        Product product5 = new Product("Северное мясо", ProductType.MEAT, 2440, 60);
+//        Product product6 = new Product("Вкусное мясо", ProductType.MEAT, 3500, 90);
+//        Product product7 = new Product("Pepsi", ProductType.BEVERAGES, 47, 40);
+//        Product product8 = new Product("Alpen Gold", ProductType.CANDY, 100, 20);
+//
+//        AbleToBeSupplied ableToBeSupplied = ProductShop.getProductShop();
+//        Supplier supplier = new ProductSupplier(ableToBeSupplied);
+//        supplier.addProduct(product1, 10);
+//        supplier.addProduct(product2, 5);
+//        supplier.addProduct(product3, 10);
+//        supplier.addProduct(product4, 100);
+//        supplier.addProduct(product5, 1);
+//        supplier.addProduct(product6, 10);
+//        supplier.addProduct(product7, 20);
+//        supplier.addProduct(product8, 20);
+
+
+//        На данном примере я продемонстрирую сразу два принципа SOLID:
+//        1) Open-closed principle
+//        Класс ProductSupplier расширяется классом VegetableSupplier без изменения кода родителя
+//        2) Liskov substitution principle
+//        Я использую метод supplyBySpecificSupplier для демонстрации принципа подмены родителя потомком
+//        в данном примере магазин овощей является частным случаем магазина всех продуктов
         Product product1 = new Product("Lindor", ProductType.CANDY, 234, 10);
         Product product2 = new Product("7 UP", ProductType.BEVERAGES, 404, 20);
         Product product3 = new Product("Мираторг", ProductType.MEAT, 1440, 50);
-        Product product4 = new Product("Овощи вкусные", ProductType.VEGETABLES, 100, 20);
-        Product product5 = new Product("Северное мясо", ProductType.MEAT, 2440, 60);
-        Product product6 = new Product("Вкусное мясо", ProductType.MEAT, 3500, 90);
-        Product product7 = new Product("Pepsi", ProductType.BEVERAGES, 47, 40);
-        Product product8 = new Product("Alpen Gold", ProductType.CANDY, 100, 20);
+        Product product4 = new Product("Овощи вкусные", ProductType.VEGETABLES, 100, 25);
+        Product product5 = new Product("Овощи", ProductType.VEGETABLES, 200, 40);
+        Product product6 = new Product("Овощи очень вкусные", ProductType.VEGETABLES, 60, 30);
 
-        AbleToBeSupplied ableToBeSupplied = ProductShop.getProductShop();
-        Supplier supplier = new ProductSupplier(ableToBeSupplied);
-        supplier.addProduct(product1, 10);
-        supplier.addProduct(product2, 5);
-        supplier.addProduct(product3, 10);
-        supplier.addProduct(product4, 100);
-        supplier.addProduct(product5, 1);
-        supplier.addProduct(product6, 10);
-        supplier.addProduct(product7, 20);
-        supplier.addProduct(product8, 20);
+        AbleToBeSupplied shopForSupplier = ProductShop.getProductShop();
+        Supplier supplier = new ProductSupplierFactory(shopForSupplier)
+                                .getSupplier();
+        Supplier vegetableSupplier = new VegetableSupplierFactory(shopForSupplier)
+                                        .getSupplier();
+
+        supplyBySpecificSupplier(supplier, product1, 5);
+        supplyBySpecificSupplier(vegetableSupplier, product1, 5);
+        supplyBySpecificSupplier(vegetableSupplier, product6, 15);
+        supplyBySpecificSupplier(vegetableSupplier, product4, 5);
+
+//        Shop shop = (Shop) shopForSupplier;
+//        shop.showAllProducts();
+    }
+
+    private static void supplyBySpecificSupplier(Supplier supplier, Product product, int amount) {
+        supplier.addProduct(product, amount);
     }
 }

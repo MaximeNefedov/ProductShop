@@ -1,4 +1,6 @@
-package Shop;
+package Shop.Suppliers;
+
+import Shop.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,15 +14,14 @@ public class ProductSupplier implements Supplier {
 //    чтобы магазин реализовывал интерфейс AbleToBeSupplied с методом, предоставляющим доступ к продуктовому складу
 
     private AbleToBeSupplied productShop;
-    private Accountant accountant;
 
     public ProductSupplier(AbleToBeSupplied productShop) {
         this.productShop = productShop;
-        accountant = ProductAccountant.getProductAccountant();
     }
 
     @Override
     public void addProduct(Product product, int amount) {
+        Accountant accountant = ProductAccountant.getProductAccountant();
         Map<ProductType, Map<String, List<Product>>> warehouse = productShop.getWarehouse();
 
         Map<String, List<Product>> productInfo = warehouse.get(product.getType());
@@ -49,7 +50,14 @@ public class ProductSupplier implements Supplier {
         }
     }
 
-    private List<Product> fillList(List<Product> products, Product product, int amount) {
+    public AbleToBeSupplied getProductShop() {
+        return productShop;
+    }
+
+    protected List<Product> fillList(List<Product> products, Product product, int amount) {
+//        Принцип магических чисел
+//        Вместо переменно amount можно бы было указать целочисленное значение и менять
+//        его вручную каждый раз по необходимости
         for (int i = 0; i < amount; i++) {
             Product clonedProduct = product.cloneProduct();
             products.add(clonedProduct);
