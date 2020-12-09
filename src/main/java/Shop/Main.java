@@ -52,6 +52,10 @@ public class Main {
     }
 
     private static boolean showCatalog() {
+//        Dependency Inversion Principle
+//        Клиент взаимодействует с магазином через специально отведенный интерфейс,
+//        не беря в голову то, какая реализация стоит за запросом, то есть вся бизнес-логика магазина
+//        скрыта от потребителя
         Shop shop = ProductShop.getProductShop();
         Scanner scanner = new Scanner(System.in);
         shop.showAllProducts();
@@ -245,6 +249,9 @@ public class Main {
         Product product5 = new Product("Овощи", ProductType.VEGETABLES, 200, 40);
         Product product6 = new Product("Овощи очень вкусные", ProductType.VEGETABLES, 60, 30);
 
+        //        Dependency Inversion Principle
+//        Аналогично покупателю, поставщик работает с магазином через специально отведенный интерфейс
+//        за счет чего, от него скрыты такие ненужные методы, как: покупка, добавление в корзину и тд
         AbleToBeSupplied shopForSupplier = ProductShop.getProductShop();
         Supplier supplier = new ProductSupplierFactory(shopForSupplier)
                                 .getSupplier();
