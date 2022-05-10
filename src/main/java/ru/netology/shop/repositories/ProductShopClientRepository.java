@@ -1,6 +1,6 @@
-package shop.repositories;
+package ru.netology.shop.repositories;
 
-import client.ProductShopClient;
+import ru.netology.shop.client.ProductShopClient;
 
 public interface ProductShopClientRepository {
     ProductShopClient findByName(String name);

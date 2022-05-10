@@ -1,7 +1,13 @@
-package shop.shop;
+package ru.netology.shop;
 
 public enum SortType {
-    NONE(0), BY_PRICE(1), BY_RATING(2), BY_COUNT(3);
+    NONE(0),
+    BY_PRICE_ASC(1),
+    BY_PRICE_DESC(2),
+    BY_RATING_ASC(3),
+    BY_RATING_DESC(4),
+    BY_COUNT_ASC(5),
+    BY_COUNT_DESC(6);
     private final int value;
 
     SortType(int value) {

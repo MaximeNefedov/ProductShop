@@ -1,26 +1,18 @@
-package shop.shop;
+package ru.netology.shop;
 
-import client.ProductShopClient;
-import shop.entites.Product;
+import ru.netology.shop.client.ProductShopClient;
+import ru.netology.shop.entites.Product;
 
-import java.util.Optional;
+import java.util.List;
 
 public interface ProductShop {
-    Optional<Product> search(String name);
+    List<Product> findProduct(String name, int amount);
 
     void showAllProducts(SortType sortType);
 
-    int createBasket(int userId);
+    int pay(String clientName);
 
-    boolean showBasket(int basketId);
-
-    boolean addToBasket(int basketId, Product product, int amount);
-
-    boolean deleteFromBasket(int basketIdId, String productName, int amount);
-
-    int buy();
-
-    void backProduct(int check);
+    void refund(int check);
 
     ProductShopClient getClient(String login, String password);
 }

@@ -1,6 +1,6 @@
-package shop.repositories;
+package ru.netology.shop.repositories;
 
-import shop.entites.Product;
+import ru.netology.shop.entites.Product;
 
 import java.util.*;
 
@@ -17,13 +17,12 @@ public class InMemoryProductRepository implements ProductRepository {
     }
 
     @Override
-    public Optional<Product> findByName(String name) {
+    public List<Product> findByName(String name) {
         List<Product> products = warehouse.get(name);
-        Product product = null;
-        if (products != null && !products.isEmpty()) {
-            product = products.get(0);
+        if (products == null) {
+            products = Collections.emptyList();
         }
-        return Optional.ofNullable(product);
+        return products;
     }
 
     @Override
@@ -44,10 +43,8 @@ public class InMemoryProductRepository implements ProductRepository {
     }
 
     @Override
-    public void saveAll(List<Product> products) {
+    public void saveAllByName(String productName, List<Product> products) {
         if (products != null && !products.isEmpty()) {
-            Product product = products.get(0);
-            String productName = product.getName();
             warehouse.compute(productName, (name, productsList) -> {
                 if (productsList == null) {
                     productsList = products;

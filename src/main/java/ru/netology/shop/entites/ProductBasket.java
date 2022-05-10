@@ -1,102 +1,86 @@
-package shop.entites;
+package ru.netology.shop.entites;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.*;
 
 public class ProductBasket {
-    private final int id;
-    private int totalPrice = 0;
+    private BigDecimal totalPrice;
     private Map<String, List<Product>> productMap = new HashMap<>();
 
-    public ProductBasket(int id) {
-        this.id = id;
+    public ProductBasket() {
+        this.totalPrice = new BigDecimal(0);
     }
 
-    public boolean add(Product product, int amount) {
-
-//        Searcher searcher = SearcherImpl.getSearcher();
-//        int amountOfProducts = searcher.searchAmountOfProducts(product.getName());
-//        if (amountOfProducts < amount) {
-//            System.out.println("=============================================" +
-//                    "\nНа данный момент на складе всего: " + amountOfProducts + " шт. данного товара" +
-//                    "\n=============================================");
-//            return false;
-//        } else if (amount == 0) {
-//            System.out.println("Количество товара не может быть равно 0");
-//            return false;
-//        }
-//        int price = 0;
-//        if (productMap.containsKey(product.getName())) {
-//            List<Product> productList = productMap.get(product.getName());
-//            for (int i = 0; i < amount; i++) {
-//                productList.add(product);
-//                price = product.getPrice();
-//                totalPrice += price;
-//            }
-//        } else {
-//            List<Product> productList = new ArrayList<>();
-//            for (int i = 0; i < amount; i++) {
-//                productList.add(product);
-//                price = product.getPrice();
-//                totalPrice += price;
-//            }
-//            productMap.put(product.getName(), productList);
-//        }
-        return true;
-    }
-
-    public Map<String, List<Product>> getProductMap() {
-        return productMap;
-    }
-
-    public int getTotalPrice() {
-        return totalPrice;
-    }
-
-    public boolean show() {
-
-        if (productMap.isEmpty()) {
-            System.out.println("пусто...");
-            return false;
-        } else {
-            Set<Map.Entry<String, List<Product>>> entries = productMap.entrySet();
-            for (Map.Entry<String, List<Product>> entry : entries) {
-                System.out.println("Товар: " + entry.getKey() + " количество товара: " + entry.getValue().size());
+    public void add(List<Product> products) {
+        Product product = products.get(0);
+        BigDecimal productPrice = product.getPrice();
+        totalPrice = totalPrice.add(productPrice.multiply(new BigDecimal(10)));
+        productMap.compute(product.getName(), (name, productsList) -> {
+            if (productsList == null) {
+                productsList = products;
+            } else {
+                productsList.addAll(products);
             }
-            System.out.println("Общая стоимость: " + totalPrice);
-        }
-        return true;
+            return productsList;
+        });
     }
 
-    public void setTotalPrice(int totalPrice) {
-        this.totalPrice = totalPrice;
-    }
-
-    public boolean delete(String name, int amount) {
+    public void remove(String name, int amount) {
         if (amount > 0) {
             if (productMap.containsKey(name)) {
                 List<Product> productList = productMap.get(name);
                 if (amount <= productList.size()) {
                     int edge = productList.size() - 1 - amount;
                     for (int i = productList.size() - 1; i > edge; i--) {
-                        totalPrice -= productList.get(i).getPrice();
+                        totalPrice = totalPrice.subtract(productList.get(i).getPrice());
                         productList.remove(i);
                     }
                     if (productList.isEmpty()) {
                         productMap.remove(name);
                     }
-                    return true;
                 } else {
                     System.out.println("Нельзя удалить " + amount
                             + " элементов, так как в корзине находится: " + productList.size());
-                    return false;
                 }
             } else {
                 System.out.println("Такого продукта нет в корзине");
-                return false;
             }
         } else {
             System.out.println("Недопустим ввод 0 и отрицательных значений");
-            return false;
         }
+    }
+
+    public BigDecimal getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void clear() {
+        productMap.clear();
+        totalPrice = BigDecimal.ZERO;
+    }
+
+    public boolean isEmpty() {
+        return totalPrice.compareTo(BigDecimal.ZERO) == 0;
+    }
+
+    public Map<String, List<Product>> getProductMap() {
+        return productMap;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        if (productMap.isEmpty()) {
+            stringBuilder.append("Корзина пуста");
+        } else {
+            for (var entry : productMap.entrySet()) {
+                stringBuilder.append("Товар: ").append(entry.getKey())
+                        .append(" количество товара: ").append(entry.getValue().size())
+                        .append("\n");
+            }
+            stringBuilder.append("Общая стоимость: ").append(totalPrice);
+        }
+        return stringBuilder.toString();
     }
 }

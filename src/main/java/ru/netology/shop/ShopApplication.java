@@ -1,11 +1,9 @@
-import exceptions.InvalidProductException;
-import exceptions.InvalidProductTypeException;
-import pages.ProductShopPages;
-import shop.shop.ProductConsumer;
-import shop.shop.ProductShop;
-import shop.shop.ProductShopImpl;
-import shop.entites.ProductType;
-import shop.ShopSupplySystem;
+package ru.netology.shop;
+
+import ru.netology.shop.client.ProductShopClient;
+import ru.netology.shop.entites.ProductType;
+import ru.netology.shop.exceptions.InvalidProductException;
+import ru.netology.shop.exceptions.InvalidProductTypeException;
 
 public class ShopApplication {
     public static void main(String[] args) throws InvalidProductException, InvalidProductTypeException {

@@ -1,6 +1,6 @@
-package shop.repositories;
+package ru.netology.shop.repositories;
 
-import shop.Transaction;
+import ru.netology.shop.Transaction;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,7 +1,7 @@
-package shop.suppliers;
+package ru.netology.shop.suppliers;
 
-import exceptions.InvalidProductTypeException;
-import shop.entites.ProductType;
+import ru.netology.shop.exceptions.InvalidProductTypeException;
+import ru.netology.shop.entites.ProductType;
 
 public interface SupplierFactory {
     Supplier getSupplier(ProductType productType) throws InvalidProductTypeException;

@@ -1,9 +1,9 @@
-package shop.shop;
+package ru.netology.shop;
 
-import shop.entites.Product;
+import ru.netology.shop.entites.Product;
 
 import java.util.List;
 
 public interface ProductConsumer {
-    void receiveProducts(List<Product> products);
+    void receiveCurrentProduct(String productName, List<Product> products);
 }

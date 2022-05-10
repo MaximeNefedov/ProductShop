@@ -1,11 +1,10 @@
-package shop;
+package ru.netology.shop;
 
-import exceptions.InvalidProductException;
-import exceptions.InvalidProductTypeException;
-import shop.entites.ProductType;
-import shop.shop.ProductConsumer;
-import shop.suppliers.ProductSupplierFactory;
-import shop.suppliers.Supplier;
+import ru.netology.shop.exceptions.InvalidProductException;
+import ru.netology.shop.exceptions.InvalidProductTypeException;
+import ru.netology.shop.entites.ProductType;
+import ru.netology.shop.suppliers.ProductSupplierFactory;
+import ru.netology.shop.suppliers.Supplier;
 
 import java.util.EnumMap;
 import java.util.Map;

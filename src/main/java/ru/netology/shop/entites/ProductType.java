@@ -1,4 +1,4 @@
-package shop.entites;
+package ru.netology.shop.entites;
 
 public enum ProductType {
     VEGETABLES("Овощи"),

@@ -1,8 +1,8 @@
-package shop.collectors;
+package ru.netology.shop.collectors;
 
-import shop.entites.ProductType;
-import shop.entites.Product;
-import shop.shop.SortType;
+import ru.netology.shop.entites.ProductType;
+import ru.netology.shop.entites.Product;
+import ru.netology.shop.SortType;
 
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -58,9 +58,14 @@ public class WarehouseCollector implements Collector<Map.Entry<String, List<Prod
         return sortType == SortType.NONE ? map -> map : map -> {
             Comparator<Map.Entry<Product, Integer>> comparator = null;
             switch (sortType) {
-                case BY_PRICE -> comparator = Comparator.comparingInt(entry -> entry.getKey().getPrice());
-                case BY_RATING -> comparator = Comparator.comparingInt(entry -> entry.getKey().getRating());
-                case BY_COUNT -> comparator = Comparator.comparingInt(Map.Entry::getValue);
+                case BY_PRICE_ASC -> comparator = Comparator.comparingDouble(entry -> entry.getKey().getPrice().doubleValue());
+                case BY_PRICE_DESC -> comparator = Comparator.comparing(entry -> entry.getKey().getPrice().doubleValue(), Comparator.reverseOrder());
+
+                case BY_RATING_ASC -> comparator = Comparator.comparingInt(entry -> entry.getKey().getRating());
+                case BY_RATING_DESC -> comparator = Comparator.comparing(entry -> entry.getKey().getRating(), Comparator.reverseOrder());
+
+                case BY_COUNT_ASC -> comparator = Comparator.comparingInt(Map.Entry::getValue);
+                case BY_COUNT_DESC -> comparator = Map.Entry.comparingByValue(Comparator.reverseOrder());
             }
             for (ProductType productType : map.keySet()) {
                 Map<Product, Integer> collect = map.get(productType).entrySet().stream()

@@ -1,81 +1,86 @@
 package ru.netology.shop;
 
-import ru.netology.shop.entites.ProductBasket;
-import ru.netology.shop.entites.User;
+import ru.netology.shop.client.ProductShopClient;
+import ru.netology.shop.entites.Product;
+import ru.netology.shop.repositories.ProductRepository;
+
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class Transaction {
+    private final int id;
+    private final Map<String, List<Product>> productMap;
+    private final ProductRepository productRepository;
+    private final ProductShopClient productShopClient;
+    private final BigDecimal sum;
+    private TransactionStatus status;
 
-    public static final int ERROR_CODE = 999;
-    private User client;
-    private int sum;
-
-    public Transaction() {
-
+    public Transaction(int id,
+                       ProductRepository productRepository,
+                       ProductShopClient productShopClient) {
+        this.id = id;
+        this.productRepository = productRepository;
+        this.productShopClient = productShopClient;
+        this.productMap = new HashMap<>(productShopClient.getProductBasket().getProductMap());
+        this.sum = productShopClient.getProductBasket().getTotalPrice();
     }
 
-    public int pay(ProductBasket productBasket, User user) {
-//        System.out.println(user.getSum());
-//        if (productBasket.getTotalPrice() <= 0) {
-//            System.out.println("Оплата покупки невозможна");
-//            return ERROR_CODE;
-//        } else {
-//            int finalSum = user.getSum() - productBasket.getTotalPrice();
-//            if (finalSum < 0) {
-//                System.out.println("Недостаточно средств для совершения покупки");
-//                return ERROR_CODE;
-//            } else {
-//                this.sum = productBasket.getTotalPrice();
-//                this.client = user;
-//                user.setSum(finalSum);
-//                Random random = new Random();
-//                int check = random.nextInt(777);
-//                TransactionDataBase dataBase = TransactionsRepository.getTransactionsRepository();
-//                dataBase.addTransaction(check, this);
-//
-//                WarehouseAdministrator administrator = new WarehouseAdministrator();
-//                administrator.deleteFromWareHouse(productBasket);
-//
-//                Map<String, List<Product>> productMap = productBasket.getProductMap();
-//                user.setProductMap(productMap);
-//                productBasket.getProductMap().clear();
-//                productBasket.setTotalPrice(0);
-//                user.setCheck(check);
-//                return user.getCheck();
-//            }
-//        }
-        return 0;
+    public void pay() {
+        for (var entry : productMap.entrySet()) {
+            String productName = entry.getKey();
+            int amount = entry.getValue().size();
+            productRepository.removeProduct(productName, amount);
+        }
+        BigDecimal totalPrice = productShopClient.getProductBasket().getTotalPrice();
+        BigDecimal shopClientBalance = productShopClient.getBalance();
+        productShopClient.setBalance(shopClientBalance.subtract(totalPrice));
+        status = TransactionStatus.COMPLETED;
     }
 
-    public void backMoney(int check) {
-//        TransactionsRepository repository = TransactionsRepository.getTransactionsRepository();
-//        Transaction transaction = repository.getTransaction(check);
-//        if (transaction == null) {
-//            System.out.println("Никаких операций совершено не было");
-//        } else {
-//            WarehouseAdministrator administrator = new WarehouseAdministrator();
-//            administrator.addToWarehouse(transaction.getClient().getProducts());
-//
-//            int back = transaction.getSum();
-//            transaction.getClient().setSum(transaction.getClient().getSum() + back);
-//            System.out.println("Уважаемый, " + transaction.getClient().getName() + "," +
-//                    " Вам возвращены Ваши денежные средства в размере: " +
-//                    transaction.getSum() + "\nТекущий баланс: " + transaction.getClient().getSum());
-//        }
+    public void rollback() {
+        for (var entry : productMap.entrySet()) {
+            String productName = entry.getKey();
+            List<Product> products = entry.getValue();
+            productRepository.saveAllByName(productName, products);
+        }
+        System.out.printf("Клиент %s вернул следующие товары:%n%s%nКлиенту возвращены денежные средства в размере: %s%n",
+                productShopClient.getLogin(),
+                productMap.entrySet().stream().map(new Function<Map.Entry<String, List<Product>>, String>() {
+                    int productCounter = 0;
+                    @Override
+                    public String apply(Map.Entry<String, List<Product>> entry) {
+                        String productName = entry.getKey();
+                        List<Product> currentProductList = entry.getValue();
+                        return ++productCounter + ") " + productName + ", количество: " + currentProductList.size();
+                    }
+                }).reduce(((s, s2) -> s + "\n" + s2)).orElseThrow(RuntimeException::new),
+                sum.toString());
+        productMap.clear();
+        BigDecimal balance = productShopClient.getBalance();
+        productShopClient.setBalance(balance.add(sum));
+        status = TransactionStatus.ROLLED_BACK;
     }
 
-    public User getClient() {
-        return client;
+    public int getId() {
+        return id;
     }
 
-    public int getSum() {
-        return sum;
+    public TransactionStatus getStatus() {
+        return status;
+    }
+
+    public enum TransactionStatus {
+        COMPLETED, ROLLED_BACK
     }
 
     @Override
     public String toString() {
-        return "TransactionImpl{" +
-                "client=" + client +
-                ", sum=" + sum +
-                '}';
+        return "Транзакция: " + id + ", статус: " + status + "\n" +
+                "клиент: " + productShopClient.getLogin() + "\n" +
+                "сумма оплаты: " + sum.doubleValue();
     }
 }

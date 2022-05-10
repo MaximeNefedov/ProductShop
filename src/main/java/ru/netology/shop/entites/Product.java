@@ -1,11 +1,12 @@
-package shop.entites;
+package ru.netology.shop.entites;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 
 public class Product {
     private final String name;
     private final ProductType type;
-    private int price;
+    private BigDecimal price;
     private int rating;
 
     public Product cloneProduct() {
@@ -13,25 +14,17 @@ public class Product {
         return product;
     }
 
-    public Product(String name, ProductType type, int price) {
+    public Product(String name, ProductType type, BigDecimal price) {
         this.name = name;
         this.type = type;
         this.price = price;
     }
 
-    public Product(String name, ProductType type, int price, int productRating) {
+    public Product(String name, ProductType type, BigDecimal price, int productRating) {
         this.name = name;
         this.type = type;
         this.price = price;
         this.rating = productRating;
-    }
-
-    public void setPrice(int price) {
-        this.price = price;
-    }
-
-    public void setRating(int rating) {
-        this.rating = rating;
     }
 
     public ProductType getType() {
@@ -42,7 +35,7 @@ public class Product {
         return name;
     }
 
-    public int getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 

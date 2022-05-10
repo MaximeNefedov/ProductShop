@@ -1,13 +1,14 @@
-package shop.suppliers;
+package ru.netology.shop.suppliers;
 
-import exceptions.InvalidProductTypeException;
-import shop.shop.ProductConsumer;
-import shop.entites.ProductType;
+import ru.netology.shop.exceptions.InvalidProductTypeException;
+import ru.netology.shop.ProductConsumer;
+import ru.netology.shop.entites.ProductType;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 public class ProductSupplierFactory implements SupplierFactory {
-    private ProductConsumer productConsumer;
+    private final ProductConsumer productConsumer;
 
     public ProductSupplierFactory(ProductConsumer productConsumer) {
         this.productConsumer = productConsumer;
@@ -42,9 +43,9 @@ public class ProductSupplierFactory implements SupplierFactory {
         public VegetableSupplier(ProductConsumer consumer, ProductType productType) {
             super(consumer, productType);
             availableProducts.putAll(Map.of(
-                            "Овощи", 100,
-                            "Овощи вкусные", 150,
-                            "Овощи очень вкусные", 200
+                            "Овощи", new BigDecimal("100.99"),
+                            "Овощи вкусные", new BigDecimal("150.35"),
+                            "Овощи очень вкусные", new BigDecimal("199.99")
                     )
             );
         }
@@ -55,8 +56,8 @@ public class ProductSupplierFactory implements SupplierFactory {
         public MeatSupplier(ProductConsumer consumer, ProductType productType) {
             super(consumer, productType);
             availableProducts.putAll(Map.of(
-                    "Мираторг", 1500,
-                    "Петелинка", 700
+                    "Мираторг", new BigDecimal("1499.98"),
+                    "Петелинка", new BigDecimal("700.55")
             ));
         }
     }
@@ -66,8 +67,8 @@ public class ProductSupplierFactory implements SupplierFactory {
         public CandiesSupplier(ProductConsumer consumer, ProductType productType) {
             super(consumer, productType);
             availableProducts.putAll(Map.of(
-                    "Альпенгольд", 600,
-                    "Lindor", 700
+                    "Альпенгольд", new BigDecimal("599.99"),
+                    "Lindor", new BigDecimal("749.99")
             ));
         }
     }
@@ -77,8 +78,8 @@ public class ProductSupplierFactory implements SupplierFactory {
         public MilkProductsSupplier(ProductConsumer consumer, ProductType productType) {
             super(consumer, productType);
             availableProducts.putAll(Map.of(
-                    "Веселый молочник", 87,
-                    "Слобода", 45
+                    "Веселый молочник", new BigDecimal("87.99"),
+                    "Слобода", new BigDecimal("49.99")
             ));
         }
     }
@@ -88,9 +89,9 @@ public class ProductSupplierFactory implements SupplierFactory {
         public BeverageSupplier(ProductConsumer consumer, ProductType productType) {
             super(consumer, productType);
             availableProducts.putAll(Map.of(
-                    "7 UP", 87,
-                    "Pepsi", 68,
-                    "Coca Cola", 72
+                    "7 UP", new BigDecimal("87.00"),
+                    "Pepsi", new BigDecimal("68.99"),
+                    "Coca Cola", new BigDecimal("72.00")
             ));
         }
     }
@@ -100,9 +101,9 @@ public class ProductSupplierFactory implements SupplierFactory {
         public FruitSupplier(ProductConsumer consumer, ProductType productType) {
             super(consumer, productType);
             availableProducts.putAll(Map.of(
-                    "Персик", 34,
-                    "Яблкоко", 22,
-                    "Дыня", 55
+                    "Персик", new BigDecimal("34.99"),
+                    "Яблкоко", new BigDecimal("22.99"),
+                    "Дыня", new BigDecimal("55.45")
             ));
         }
     }

@@ -1,6 +1,6 @@
-package shop.repositories;
+package ru.netology.shop.repositories;
 
-import shop.Transaction;
+import ru.netology.shop.Transaction;
 
 public interface TransactionRepository {
     Transaction findByCheck(int check);

@@ -1,6 +1,6 @@
-package shop.suppliers;
+package ru.netology.shop.suppliers;
 
-import exceptions.InvalidProductException;
+import ru.netology.shop.exceptions.InvalidProductException;
 
 public interface Supplier {
     void addProducts(String name, int amount) throws InvalidProductException;
