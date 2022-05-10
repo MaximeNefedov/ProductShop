@@ -1,44 +1,46 @@
-package shop;
-
-import exceptions.ProductNotFoundException;
+package shop.entites;
 
 import java.util.*;
 
 public class ProductBasket {
-
+    private final int id;
     private int totalPrice = 0;
     private Map<String, List<Product>> productMap = new HashMap<>();
 
-    public boolean add(Product product, int amount) throws ProductNotFoundException {
+    public ProductBasket(int id) {
+        this.id = id;
+    }
 
-        Searcher searcher = SearcherImpl.getSearcher();
-        int amountOfProducts = searcher.searchAmountOfProducts(product.getName());
-        if (amountOfProducts < amount) {
-            System.out.println("=============================================" +
-                    "\nНа данный момент на складе всего: " + amountOfProducts + " шт. данного товара" +
-                    "\n=============================================");
-            return false;
-        } else if (amount == 0) {
-            System.out.println("Количество товара не может быть равно 0");
-            return false;
-        }
-        int price = 0;
-        if (productMap.containsKey(product.getName())) {
-            List<Product> productList = productMap.get(product.getName());
-            for (int i = 0; i < amount; i++) {
-                productList.add(product);
-                price = product.getPrice();
-                totalPrice += price;
-            }
-        } else {
-            List<Product> productList = new ArrayList<>();
-            for (int i = 0; i < amount; i++) {
-                productList.add(product);
-                price = product.getPrice();
-                totalPrice += price;
-            }
-            productMap.put(product.getName(), productList);
-        }
+    public boolean add(Product product, int amount) {
+
+//        Searcher searcher = SearcherImpl.getSearcher();
+//        int amountOfProducts = searcher.searchAmountOfProducts(product.getName());
+//        if (amountOfProducts < amount) {
+//            System.out.println("=============================================" +
+//                    "\nНа данный момент на складе всего: " + amountOfProducts + " шт. данного товара" +
+//                    "\n=============================================");
+//            return false;
+//        } else if (amount == 0) {
+//            System.out.println("Количество товара не может быть равно 0");
+//            return false;
+//        }
+//        int price = 0;
+//        if (productMap.containsKey(product.getName())) {
+//            List<Product> productList = productMap.get(product.getName());
+//            for (int i = 0; i < amount; i++) {
+//                productList.add(product);
+//                price = product.getPrice();
+//                totalPrice += price;
+//            }
+//        } else {
+//            List<Product> productList = new ArrayList<>();
+//            for (int i = 0; i < amount; i++) {
+//                productList.add(product);
+//                price = product.getPrice();
+//                totalPrice += price;
+//            }
+//            productMap.put(product.getName(), productList);
+//        }
         return true;
     }
 

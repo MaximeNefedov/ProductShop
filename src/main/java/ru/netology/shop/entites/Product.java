@@ -1,4 +1,4 @@
-package shop;
+package shop.entites;
 
 import java.util.Objects;
 
@@ -6,26 +6,32 @@ public class Product {
     private final String name;
     private final ProductType type;
     private int price;
-    private int productRating;
+    private int rating;
 
     public Product cloneProduct() {
-        Product product = new Product(getName(), getType(), getPrice(), getProductRating());
+        Product product = new Product(getName(), getType(), getPrice(), getRating());
         return product;
+    }
+
+    public Product(String name, ProductType type, int price) {
+        this.name = name;
+        this.type = type;
+        this.price = price;
     }
 
     public Product(String name, ProductType type, int price, int productRating) {
         this.name = name;
         this.type = type;
         this.price = price;
-        this.productRating = productRating;
+        this.rating = productRating;
     }
 
     public void setPrice(int price) {
         this.price = price;
     }
 
-    public void setProductRating(int productRating) {
-        this.productRating = productRating;
+    public void setRating(int rating) {
+        this.rating = rating;
     }
 
     public ProductType getType() {
@@ -40,8 +46,8 @@ public class Product {
         return price;
     }
 
-    public int getProductRating() {
-        return productRating;
+    public int getRating() {
+        return rating;
     }
 
     @Override
@@ -50,7 +56,7 @@ public class Product {
         if (o == null || getClass() != o.getClass()) return false;
         Product product = (Product) o;
         return price == product.price &&
-                productRating == product.productRating &&
+                rating == product.rating &&
                 Objects.equals(name, product.name) &&
                 type == product.type;
     }
@@ -64,7 +70,7 @@ public class Product {
     public String toString() {
         return "Товар: " + name + ","
                 + " Стоимость: " + price + ","
-                + " Рейтинг: " + productRating;
+                + " Рейтинг: " + rating;
 
     }
 }

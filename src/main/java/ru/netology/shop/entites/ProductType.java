@@ -1,16 +1,20 @@
-package shop;
+package shop.entites;
 
-public enum  ProductType {
+public enum ProductType {
     VEGETABLES("Овощи"),
     FRUIT("Фрукты"),
     MEAT("Мясные продукты"),
     BEVERAGES("Напитки"),
     MILK_PRODUCTS("Молочные продукты"),
-    CANDY("Конфеты");
+    SWEETS("Конфеты");
 
-    String description;
+    private String description;
 
     ProductType(String description) {
         this.description = description;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }
