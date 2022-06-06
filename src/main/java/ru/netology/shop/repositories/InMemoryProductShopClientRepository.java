@@ -18,7 +18,7 @@ public class InMemoryProductShopClientRepository implements ProductShopClientRep
     }
 
     @Override
-    public void save(ProductShopClient productShopClient) {
-        clients.put(productShopClient.getLogin(), productShopClient);
+    public boolean save(ProductShopClient productShopClient) {
+        return clients.putIfAbsent(productShopClient.getLogin(), productShopClient) == null;
     }
 }

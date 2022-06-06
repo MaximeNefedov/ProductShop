@@ -5,14 +5,23 @@ import ru.netology.shop.entites.ProductType;
 import ru.netology.shop.exceptions.InvalidProductException;
 import ru.netology.shop.exceptions.InvalidProductTypeException;
 
+import java.math.BigDecimal;
+
 public class ShopApplication {
     public static void main(String[] args) throws InvalidProductException, InvalidProductTypeException {
         ProductShop productShop = new ProductShopImpl();
         supplyProducts((ProductConsumer) productShop);
-        String login = "max";
-        String password = "123";
+        productShop.setClient(ProductShopClient.builder()
+                .login("max")
+                .password("123")
+                .balance(new BigDecimal("15000.00"))
+                .productShop(productShop)
+                .build());
+        String login = "john";
+        String password = "321";
         ProductShopClient shopClient = productShop.getClient(login, password);
         shopClient.start();
+        shopClient.close();
     }
 
     private static void supplyProducts(ProductConsumer productConsumer) throws InvalidProductTypeException, InvalidProductException {

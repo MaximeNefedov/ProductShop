@@ -5,6 +5,7 @@ import ru.netology.shop.collectors.WarehouseCollector;
 import ru.netology.shop.entites.Product;
 import ru.netology.shop.entites.ProductBasket;
 import ru.netology.shop.entites.ProductType;
+import ru.netology.shop.exceptions.UnauthorizedClientException;
 import ru.netology.shop.repositories.*;
 
 import java.math.BigDecimal;
@@ -30,8 +31,8 @@ public class ProductShopImpl implements ProductShop, ProductConsumer {
     }
 
     public void showAllProducts(SortType sortType) {
-        Map<String, List<Product>> warehouse = productRepository.getWarehouse();
-        Map<ProductType, Map<Product, Integer>> warehouseMap = warehouse.entrySet().stream().collect(new WarehouseCollector(sortType));
+        var warehouse = productRepository.getWarehouse();
+        var warehouseMap = warehouse.entrySet().stream().collect(new WarehouseCollector(sortType));
         StringBuilder stringBuilder = new StringBuilder();
         for (var warehouseEntry : warehouseMap.entrySet()) {
             ProductType productType = warehouseEntry.getKey();
@@ -53,6 +54,11 @@ public class ProductShopImpl implements ProductShop, ProductConsumer {
     @Override
     public int pay(String clientName) {
         ProductShopClient productShopClient = activeProductShopClients.get(clientName);
+        if (productShopClient == null) {
+            throw new UnauthorizedClientException(
+                    String.format("Клиент \"%s\" не вошел в систему", clientName)
+            );
+        }
         ProductBasket productBasket = productShopClient.getProductBasket();
         Transaction transaction = new Transaction(++transactionIdCounter, productRepository, productShopClient);
         transaction.pay();
@@ -71,6 +77,31 @@ public class ProductShopImpl implements ProductShop, ProductConsumer {
             System.out.println("Откат транзакции невозможен");
         } else {
             transaction.rollback();
+        }
+    }
+
+    @Override
+    public void setClient(ProductShopClient productShopClient) {
+        Objects.requireNonNull(productShopClient);
+        if (activeProductShopClients.get(productShopClient.getLogin()) == null) {
+            if (!productShopClientRepository.save(productShopClient)) {
+                System.out.printf("Клиент \"%s\" уже вошел в систему%n", productShopClient.getLogin());
+            }
+        } else {
+            System.out.printf("Клиент под именем \"%s\" уже существует%n", productShopClient.getLogin());
+        }
+    }
+
+    @Override
+    public void updateClientBalance(String login, BigDecimal cash) {
+        ProductShopClient client = activeProductShopClients.get(login);
+        if (client == null) {
+            System.out.printf("Пополнение денежных средств не выполнено. Неверный логин пользователя: \"%s\"%n", login);
+        } else {
+            BigDecimal currentBalance = client.getBalance();
+            client.setBalance(currentBalance.add(cash));
+            System.out.printf("Клиент \"%s\" пополнил баланс на: %s. Текущий баланс: %s%n",
+                    login, cash, client.getBalance());
         }
     }
 
@@ -102,13 +133,12 @@ public class ProductShopImpl implements ProductShop, ProductConsumer {
             // Если нет, то найти клиента в репозитории
             ProductShopClient clientFromRepository = productShopClientRepository.findByName(login);
             if (clientFromRepository == null) {
+                System.out.println("Создание нового клиента...");
                 // Если клиент не найден - создать нового
                 ProductShopClient newClient = ProductShopClient.builder()
                         .login(login)
                         .password(password)
-//                        .balance(BigDecimal.ZERO)
-                        .balance(new BigDecimal("10000"))
-                        .productBasket(new ProductBasket())
+                        .balance(BigDecimal.ZERO)
                         .productShop(this)
                         .build();
                 // Сохранить его в активных пользователях
@@ -127,5 +157,10 @@ public class ProductShopImpl implements ProductShop, ProductConsumer {
             // Если пользователь все еще активен - просто вернуть его
             return productShopClient;
         }
+    }
+
+    @Override
+    public void closeClient(String login) {
+        activeProductShopClients.remove(login);
     }
 }

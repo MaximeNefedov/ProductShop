@@ -38,7 +38,6 @@ public class ProductShopClient {
         private String login;
         private String password;
         private ProductShop productShop;
-        private ProductBasket productBasket;
         private BigDecimal balance;
 
         public ProductShopClientBuilder login(String login) {
@@ -56,11 +55,6 @@ public class ProductShopClient {
             return this;
         }
 
-        public ProductShopClientBuilder productBasket(ProductBasket productBasket) {
-            this.productBasket = productBasket;
-            return this;
-        }
-
         public ProductShopClientBuilder balance(BigDecimal balance) {
             this.balance = balance;
             return this;
@@ -68,7 +62,7 @@ public class ProductShopClient {
 
         public ProductShopClient build() {
             validateFields();
-            return new ProductShopClient(login, password, productShop, productBasket, balance);
+            return new ProductShopClient(login, password, productShop, new ProductBasket(), balance);
         }
 
         private void validateFields() {
@@ -81,6 +75,10 @@ public class ProductShopClient {
         viewMainPage();
     }
 
+    public void close() {
+        productShop.closeClient(login);
+    }
+
     private void viewMainPage() {
         System.out.println("Добро пожаловать в продуктовый магазин, Ваш баланс: " + balance.doubleValue());
         boolean isClosed = false;
@@ -90,6 +88,7 @@ public class ProductShopClient {
                     "\nВведите 2 для поиска продукта по названию" +
                     "\nВведите 3 для отображения вашей корзины" +
                     "\nВведите 4 для возврата товара по чеку" +
+                    "\nВведите 5 для пополнения счета" +
                     "\nВведите 0 для выхода" +
                     "\n======================================================");
             int input = scanner.nextInt();
@@ -104,6 +103,7 @@ public class ProductShopClient {
                     productShop.refund(check);
                     System.out.println("Ваш баланс: " + balance);
                 }
+                case 5 -> updateBalance();
                 default -> System.out.println("Введите корректный нормер операции");
             }
         }
@@ -195,6 +195,7 @@ public class ProductShopClient {
                     "\n===================Продуктовая корзина===================\n" +
                     "Введите 1, чтобы оплатить товары\n" +
                     "Введите 2, чтобы удалить товар из корзины\n" +
+                    "Введите 3, чтобы пополнить счет\n" +
                     "Введите 0, чтобы выйти в главное меню");
             int input = scanner.nextInt();
             switch (input) {
@@ -222,7 +223,19 @@ public class ProductShopClient {
                         System.out.println("Корзина пуста");
                     }
                 }
+                case 3 -> updateBalance();
             }
+        }
+    }
+
+    private void updateBalance() {
+        scanner.nextLine();
+        System.out.println("Введите сумму");
+        try {
+            double sum = Double.parseDouble(scanner.nextLine());
+            productShop.updateClientBalance(login, new BigDecimal(sum));
+        } catch (NumberFormatException e) {
+            System.out.println("Некорректный ввод");
         }
     }
 

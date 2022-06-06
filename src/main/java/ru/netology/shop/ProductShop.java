@@ -3,6 +3,7 @@ package ru.netology.shop;
 import ru.netology.shop.client.ProductShopClient;
 import ru.netology.shop.entites.Product;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface ProductShop {
@@ -14,5 +15,11 @@ public interface ProductShop {
 
     void refund(int check);
 
+    void setClient(ProductShopClient productShopClient);
+
+    void updateClientBalance(String login, BigDecimal cash);
+
     ProductShopClient getClient(String login, String password);
+
+    void closeClient(String login);
 }
